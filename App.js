@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
 import { enableScreens } from "react-native-screens";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { NavigationContainer } from "@react-navigation/native";
 import ShopStackNavigator from "./navigation/ShopStackNavigator";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import DrawerNavigator from "./navigation/DrawerNavigator";
 import colors from "./constants/colors";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
@@ -40,17 +39,8 @@ export default function App() {
         style="light"
       />
       <NavigationContainer>
-        <ShopStackNavigator />
+        <DrawerNavigator />
       </NavigationContainer>
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
