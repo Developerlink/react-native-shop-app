@@ -1,8 +1,10 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ShopStackNavigator from "./ShopStackNavigator";
-import colors from "../constants/colors";
 import OrdersStackNavigator from "./OrdersStackNavigator";
+import UserStackNavigator from "./UserStackNavigator";
+
+import colors from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
 const Drawer = createDrawerNavigator();
@@ -10,7 +12,7 @@ const Drawer = createDrawerNavigator();
 export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
-      initialRouteName="/productOverview"
+      initialRouteName="/productDrawer"
       screenOptions={{
         headerShown: false,
         drawerLabelStyle: {
@@ -21,7 +23,7 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen
-        name="/productOverview"
+        name="/productDrawer"
         component={ShopStackNavigator}
         options={{
           title: "Products",
@@ -35,13 +37,27 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="/ordersOverview"
+        name="/ordersDrawer"
         component={OrdersStackNavigator}
         options={{
           title: "Orders",
           drawerIcon: ({ focused }) => (
             <Ionicons
               name="ios-list"
+              size={23}
+              color={focused ? colors.primaryLight : colors.inactive}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="/userProductsDrawer"
+        component={UserStackNavigator}
+        options={{
+          title: "Your Products",
+          drawerIcon: ({ focused }) => (
+            <Ionicons
+              name="ios-create"
               size={23}
               color={focused ? colors.primaryLight : colors.inactive}
             />

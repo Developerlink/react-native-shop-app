@@ -23,7 +23,7 @@ export default function CartScreen({ navigation, route }) {
           onPress={() => {
             dispatch(addOrder({items, totalAmount}));
             dispatch(resetCart());
-            navigation.navigate("/ordersOverview");
+            navigation.navigate("/ordersDrawer");
           }}
         />
       </View>

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import CartItem from "../models/cartItem";
 
 const initialState = {
   items: [],
@@ -65,8 +64,18 @@ const cartSlice = createSlice({
       // state = initialState; // This does not re-render GUI for some reason!
       //console.log(state);
     },
+    deleteProductFromCart: (state,action) => {
+      const id = action.payload.id;
+      const itemToBeRemoved = state.items.find(item => item.id === id);
+      //console.log("Item to be removed: " + itemToBeRemoved);
+      if (itemToBeRemoved){
+        state.totalAmount = state.totalAmount - itemToBeRemoved.sum;
+        state.items = state.items.filter(item => item.id !== id);
+      }
+
+    }
   },
 });
 
-export const { addToCart, removeFromCart, resetCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, resetCart, deleteProductFromCart } = cartSlice.actions;
 export default cartSlice.reducer;
