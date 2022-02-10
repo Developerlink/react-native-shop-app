@@ -5,6 +5,7 @@ import colors from "../../constants/colors";
 import CartItem from "../../components/CartItem";
 import { removeFromCart, resetCart } from "../../store/cartSlice";
 import { addOrder } from "../../store/orderSlice";
+import Card from "../../components/Card";
 
 export default function CartScreen({ navigation, route }) {
   const { totalAmount, items } = useSelector((state) => state.cart);
@@ -12,7 +13,7 @@ export default function CartScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.summary}>
+      <Card style={styles.summary}>
         <Text style={styles.summaryText}>
           Total: <Text style={styles.amount}>$ {totalAmount.toFixed(2)}</Text>
         </Text>
@@ -26,7 +27,7 @@ export default function CartScreen({ navigation, route }) {
             navigation.navigate("/ordersDrawer");
           }}
         />
-      </View>
+      </Card>
       <FlatList
         data={items}
         renderItem={(itemData) => (
@@ -52,14 +53,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
     padding: 10,
-    shadowColor: "black",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "white",
   },
   summaryText: {
     fontFamily: "open-sans-bold",

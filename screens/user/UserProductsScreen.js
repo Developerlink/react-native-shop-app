@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Button } from "react-native";
+import { View, Text, StyleSheet, FlatList, Button, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/ProductItem";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -58,8 +58,17 @@ export default function UserProductsScreen({ navigation, route }) {
             color={colors.primary}
             title="Delete"
             onPress={() => {
-              dispatch(deleteProduct({ id: itemData.item.id }));
-              dispatch(deleteProductFromCart({ id: itemData.item.id }));
+              Alert.alert("Are you sure?", "Do want to delete this item?", [
+                { text: "No", style: "default" },
+                {
+                  text: "Yes",
+                  style: "destructive",
+                  onPress: () => {
+                    dispatch(deleteProduct({ id: itemData.item.id }));
+                    dispatch(deleteProductFromCart({ id: itemData.item.id }));
+                  },
+                },
+              ]);
             }}
           />
         </ProductItem>

@@ -12,7 +12,7 @@ const Drawer = createDrawerNavigator();
 export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
-      initialRouteName="/productDrawer"
+      initialRouteName="/userProductsDrawer"
       screenOptions={{
         headerShown: false,
         drawerLabelStyle: {

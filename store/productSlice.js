@@ -28,7 +28,7 @@ const productSlice = createSlice({
       // console.log("creating product");
       // console.log(action.payload);
       let newProduct = action.payload;
-      newProduct.id = Date.now.toString();
+      newProduct.id = Date();
       let currentProducts = state.products;
       currentProducts.push(newProduct);
       state.products = currentProducts;

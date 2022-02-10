@@ -8,11 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import colors from "../constants/colors";
+import Card from "./Card";
 
 export default function ProductItem(props) {
   return (
     <TouchableOpacity onPress={props.onSelect}>
-      <View style={styles.product}>
+      <Card style={styles.product}>
         <Image
           style={{ ...styles.image, ...props.style }}
           source={{ uri: props.image }}
@@ -24,21 +25,13 @@ export default function ProductItem(props) {
         <View style={styles.actions}>
           {props.children}
         </View>
-      </View>
+      </Card>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  product: {
-    shadowColor: "black",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "white",
+  product: {    
     height: 300,
     margin: 20,
   },
