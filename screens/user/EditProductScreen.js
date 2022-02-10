@@ -13,7 +13,15 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/CustomHeaderButton";
 import { createProduct, updateProduct } from "../../store/productSlice";
 import { useForm, Controller } from "react-hook-form";
-import { onChange } from "react-native-reanimated";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+
+const schema = yup.object({
+  title: yup.string().required("Title is a required field"),
+  imageUrl: yup.string().required("Image URL is a required field"),
+  price: yup.number("Price must be a number").positive("Price must be a positive number").required("Price is a required field"),
+  description: yup.string().required("Description is a required field"),
+});
 
 export default function EditProductScreen({ navigation, route }) {
   const { products } = useSelector((state) => state.products);
@@ -28,7 +36,9 @@ export default function EditProductScreen({ navigation, route }) {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema)
+  });
   const titleInputRef = useRef();
   const imageUrlInputRef = useRef();
   const priceInputRef = useRef();
@@ -57,24 +67,23 @@ export default function EditProductScreen({ navigation, route }) {
     navigation.goBack();
   };
 
-  // const error = Object.keys(errors)[0];
+  const onError = (errors) => {
+    //console.log("inside on error");
+    const error = Object.keys(errors)[0];
 
-  // if (error === "title") {
-  //   titleInputRef.current.focus();
-  // } else if (error === "imageUrl") {
-  //   imageUrlInputRef.current.focus();
-  // } else if (error === "price") {
-  //   priceInputRef.current.focus();
-  // } else if (error === "description") {
-  //   descriptionInputRef.current.focus();
-  // } else if (error) {
-  //   console.log(errors);
-  // } else {
-  //   console.log("There are no errors!");
-  // }
-
-  const onError = () => {
-    console.log("submithandler");
+    if (error === "title") {
+      titleInputRef.current.focus();
+    } else if (error === "imageUrl") {
+      imageUrlInputRef.current.focus();
+    } else if (error === "price") {
+      priceInputRef.current.focus();
+    } else if (error === "description") {
+      descriptionInputRef.current.focus();
+    } else if (error) {
+      console.log(errors);
+    } else {
+      console.log("There are no errors!");
+    }
   };
 
   //console.log(errors);
@@ -104,7 +113,11 @@ export default function EditProductScreen({ navigation, route }) {
     navigation.setOptions({
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-          <Item title="save" iconName="ios-checkmark" onPress={errors ? handleSubmit(onError) : handleSubmit(onSubmit)} />
+          <Item
+            title="save"
+            iconName="ios-checkmark"
+            onPress={handleSubmit(onSubmit, onError)}
+          />
         </HeaderButtons>
       ),
     });
@@ -119,6 +132,7 @@ export default function EditProductScreen({ navigation, route }) {
             control={control}
             name="title"
             rules={{ required: true }}
+            defaultValue=""
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 style={styles.input}
@@ -131,7 +145,7 @@ export default function EditProductScreen({ navigation, route }) {
             )}
           />
           {errors["title"] && (
-            <Text style={styles.error}>Title is required</Text>
+            <Text style={styles.error}>{errors["title"].message}</Text>
           )}
         </View>
         <View style={styles.formControl}>
@@ -152,7 +166,7 @@ export default function EditProductScreen({ navigation, route }) {
             )}
           />
           {errors["imageUrl"] && (
-            <Text style={styles.error}>Image URL is required</Text>
+            <Text style={styles.error}>{errors["imageUrl"].message}</Text>
           )}
         </View>
         {selectedProduct.id !== "" ? null : (
@@ -175,7 +189,7 @@ export default function EditProductScreen({ navigation, route }) {
               )}
             />
             {errors["price"] && (
-              <Text style={styles.error}>Price is required</Text>
+              <Text style={styles.error}>Price is a required field and must be a positive number </Text>
             )}
           </View>
         )}
@@ -196,7 +210,7 @@ export default function EditProductScreen({ navigation, route }) {
             )}
           />
           {errors["description"] && (
-            <Text style={styles.error}>Description is required</Text>
+            <Text style={styles.error}>{errors["description"].message}</Text>
           )}
         </View>
       </View>
