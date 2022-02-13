@@ -12,7 +12,7 @@ export default function UserProductsScreen({ navigation, route }) {
   const { userProducts } = useSelector((state) => state.products);
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  useEffect(async () => {
     navigation.setOptions({
       headerLeft: () => (
         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>

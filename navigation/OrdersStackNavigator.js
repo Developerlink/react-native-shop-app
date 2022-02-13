@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import colors from "../constants/colors";
 import defaultHeaderOptions from "../constants/defaultHeaderOptions";
 import OrdersScreen from "../screens/shop/OrdersScreen";
@@ -14,8 +14,9 @@ export default function OrdersStackNavigator() {
         initialRouteName="/orders"
         screenOptions={{
           headerStyle: {
-            backgroundColor: colors.primaryLight,
+            backgroundColor: Platform.OS === "android" ? colors.primaryLight : "white",
           },
+          headerTintColor: Platform.OS === "android" ? "white" : colors.primaryLight,
           ...defaultHeaderOptions,
         }}
       >

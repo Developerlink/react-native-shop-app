@@ -9,6 +9,7 @@ import DrawerNavigator from "./navigation/DrawerNavigator";
 import colors from "./constants/colors";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
+import { Platform } from "react-native";
 
 enableScreens();
 
@@ -36,7 +37,7 @@ export default function App() {
     <Provider store={store}>
       <StatusBar
         backgroundColor={colors.primaryDark}
-        style="light"
+        style={Platform.OS === "android" ? "light" : "dark" }
       />
       <NavigationContainer>
         <DrawerNavigator />

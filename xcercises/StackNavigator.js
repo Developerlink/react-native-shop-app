@@ -1,42 +1,33 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Platform } from "react-native";
-import colors from "../constants/colors";
-import defaultHeaderOptions from "../constants/defaultHeaderOptions";
-
 import ProductsOverviewScreen from "../screens/shop/ProductsOverviewScreen";
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
-import CartScreen from "../screens/shop/CartScreen";
+import { Platform, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
-export default function ShopStackNavigator() {
+export default function StackNavigator() {
   return (
     <View style={{ flex: 1 }} collapsable={false}>
       <Stack.Navigator
-        initialRouteName="/products"
+        initialRouteName="/overview"
         screenOptions={{
           headerStyle: {
-            backgroundColor: Platform.OS === "android" ? colors.primary : "white",
+            backgroundColor: Platform.OS === "android" ? "black" : "black",
           },
-          headerTintColor: Platform.OS === "android" ? "#fff" : colors.primary,
-          ...defaultHeaderOptions,
+          headerTintColor: Platform.OS === "android" ? "white" : "white",
+          headerTitleAlign: "center",
+          headerTitleStyle: "open-sans-bold",
         }}
       >
         <Stack.Screen
-          name="/products"
+          name="/overview"
           component={ProductsOverviewScreen}
           options={{ title: "Products" }}
         />
         <Stack.Screen
-          name="/productDetails"
+          name="/details"
           component={ProductDetailScreen}
           options={{ title: "Product Details" }}
-        />
-        <Stack.Screen
-          name="/cart"
-          component={CartScreen}
-          options={{ title: "Cart" }}
         />
       </Stack.Navigator>
     </View>

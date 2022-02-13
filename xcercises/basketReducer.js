@@ -2,17 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   list: [],
-  state: false,
-};
+  state: false
+}
 
 const basketSlice = createSlice({
   name: "basket",
   initialState,
   reducers: {
-    reducer1: (state, action) => {},
-    reducer2: (state, action) => {},
-  },
-});
+    reducer1: (state,action) => {
 
-export const { reducer1, reducer2 } = basketSlice.actions;
+    },
+    reducer2: (state,action) => {
+
+    }
+  }
+})
+
+export const {reducer1, reducer2} = basketSlice.actions;
 export default basketSlice.reducer;

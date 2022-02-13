@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import PRODUCTS from "../data/dummyData";
+import agent from "../api/agent";
 
 const productsInJson = JSON.stringify(PRODUCTS);
 const products = JSON.parse(productsInJson);
@@ -7,7 +8,34 @@ const products = JSON.parse(productsInJson);
 const initialState = {
   products: products,
   userProducts: products.filter((product) => product.ownerId === "u1"),
+  status: "idle"
 };
+
+export const getProductsAsync = createAsyncThunk(
+  "products/getProductsAsync",
+  async (_, thunkAPI) => {
+    try {
+      const result = await agent.Products.getProducts();
+      console.log(result);
+      return result;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({error: error.data});
+    }
+  }
+)
+
+export const createProductAsync = createAsyncThunk(
+  "products/createProductAsync",
+  async (data, thunkAPI) => {
+    //console.log("thunk reached");
+    try {
+      const result = await agent.Products.postProduct(data);
+      return result;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.data });
+    }
+  }
+);
 
 const productSlice = createSlice({
   name: "products",
@@ -44,7 +72,7 @@ const productSlice = createSlice({
         (product) => product.id === action.payload.id
       );
       // console.log(updatedProduct);
-      currentProducts[index] = action.payload; 
+      currentProducts[index] = action.payload;
       //console.log(currentProducts[index]);
       state.products = currentProducts;
       //console.log(state.products);
@@ -54,6 +82,30 @@ const productSlice = createSlice({
       );
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(createProductAsync.pending, (state) => {
+      state.status = "pendingCreateProduct";
+      console.log(state.status);
+    }),
+    builder.addCase(createProductAsync.fulfilled, (state) => {
+      state.status = "idle";
+      console.log(state.status);
+    }),
+    builder.addCase(createProductAsync.rejected, (state) => {
+      state.status = "idle";
+    }),
+    builder.addCase(getProductsAsync.pending, (state) => {
+      state.status = "pendingGetProducts";
+      console.log(state.status);
+    }),
+    builder.addCase(getProductsAsync.fulfilled, (state) => {
+      state.status = "idle";
+      console.log(state.status);
+    }),
+    builder.addCase(getProductsAsync.rejected, (state) => {
+      state.status = "idle";
+    }) 
+  }
 });
 
 export const { deleteProduct, createProduct, updateProduct } =
