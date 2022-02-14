@@ -13,7 +13,7 @@ export default function UserStackNavigator({ navigation, route }) {
 
   return (
     <Stack.Navigator
-      initialRouteName="/axios"
+      initialRouteName="/userProducts"
       screenOptions={{
         headerStyle: {
           backgroundColor: Platform.OS === "android" ? colors.primaryDark : "white",

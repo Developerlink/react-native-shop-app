@@ -14,7 +14,7 @@ export default function ({ navigation }) {
   const dispatch = useDispatch();
   
   useEffect(async () => {
-    console.log("testing1");
+    //console.log("testing");
 
     try {
       //const res = dispatch(createProductAsync({id: "t1", name: "testaluta"}));

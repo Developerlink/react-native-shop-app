@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ShopStackNavigator from "./ShopStackNavigator";
 import OrdersStackNavigator from "./OrdersStackNavigator";
 import UserStackNavigator from "./UserStackNavigator";
+import { useDispatch } from "react-redux";
 
 import colors from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
 const Drawer = createDrawerNavigator();
 
-export default function DrawerNavigator() {
+export default function DrawerNavigator() {  
+
   return (
     <Drawer.Navigator
-      initialRouteName="/userProductsDrawer"
+      initialRouteName="/productsDrawer"
       screenOptions={{
         headerShown: false,
         drawerLabelStyle: {

@@ -6,36 +6,72 @@ const productsInJson = JSON.stringify(PRODUCTS);
 const products = JSON.parse(productsInJson);
 
 const initialState = {
-  products: products,
-  userProducts: products.filter((product) => product.ownerId === "u1"),
-  status: "idle"
+  products: [],
+  userProducts: [],
+  status: "idle",
+  errorStatus: "",
 };
 
 export const getProductsAsync = createAsyncThunk(
   "products/getProductsAsync",
   async (_, thunkAPI) => {
     try {
+      let loadedProducts = [];
       const result = await agent.Products.getProducts();
-      console.log(result);
-      return result;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({error: error.data});
-    }
-  }
-)
-
-export const createProductAsync = createAsyncThunk(
-  "products/createProductAsync",
-  async (data, thunkAPI) => {
-    //console.log("thunk reached");
-    try {
-      const result = await agent.Products.postProduct(data);
-      return result;
+      //console.log(result);
+      for (const key in result) {
+        loadedProducts.push({
+          id: key,
+          ...result[key],
+        });
+      }
+      return loadedProducts;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.data });
     }
   }
 );
+
+export const postProductAsync = createAsyncThunk(
+  "products/postProductAsync",
+  async (data, thunkAPI) => {
+    //console.log("thunk reached");
+    try {
+      const result = await agent.Products.postProduct(data);
+      return {
+        id: result.name,
+        ...data,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.data });
+    }
+  }
+);
+
+export const putProductAsync = createAsyncThunk(
+  "products/putProductAsync",
+  async (data, thunkAPI) => {
+    try {
+      await agent.Products.putProduct(data);
+
+      return { id: data.key, ...data.product };
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.data });
+    }
+  }
+);
+
+export const deleteProductAsync = createAsyncThunk(
+  "products/deleteProductAsync",
+  async (id, thunkAPI) => {
+    try {
+      await agent.Products.deleteProduct(id);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({error: error.data});
+    }
+  }
+)
 
 const productSlice = createSlice({
   name: "products",
@@ -54,9 +90,8 @@ const productSlice = createSlice({
     },
     createProduct: (state, action) => {
       // console.log("creating product");
-      // console.log(action.payload);
+      console.log(action.payload);
       let newProduct = action.payload;
-      newProduct.id = Date();
       let currentProducts = state.products;
       currentProducts.push(newProduct);
       state.products = currentProducts;
@@ -81,33 +116,97 @@ const productSlice = createSlice({
         (product) => product.ownerId === "u1"
       );
     },
+    resetErrorStatus: (state) => {
+      errorStatus = "";
+    }
   },
   extraReducers: (builder) => {
-    builder.addCase(createProductAsync.pending, (state) => {
-      state.status = "pendingCreateProduct";
+    builder.addCase(postProductAsync.pending, (state) => {
+      state.status = "pendingPostProduct";
       console.log(state.status);
     }),
-    builder.addCase(createProductAsync.fulfilled, (state) => {
-      state.status = "idle";
-      console.log(state.status);
-    }),
-    builder.addCase(createProductAsync.rejected, (state) => {
-      state.status = "idle";
-    }),
-    builder.addCase(getProductsAsync.pending, (state) => {
-      state.status = "pendingGetProducts";
-      console.log(state.status);
-    }),
-    builder.addCase(getProductsAsync.fulfilled, (state) => {
-      state.status = "idle";
-      console.log(state.status);
-    }),
-    builder.addCase(getProductsAsync.rejected, (state) => {
-      state.status = "idle";
-    }) 
-  }
+      builder.addCase(postProductAsync.fulfilled, (state, action) => {
+        let newProduct = action.payload;
+        // Updating all products.
+        let currentProducts = state.products;
+        currentProducts.push(newProduct);
+        state.products = currentProducts;
+        // Updating user related products.
+        state.userProducts = state.products.filter(
+          (product) => product.ownerId === "u1"
+        );
+        state.status = "idle";
+        console.log(state.status);
+      }),
+      builder.addCase(postProductAsync.rejected, (state) => {
+        state.status = "idle";
+        state.errorStatus = "Something went wrong posting the product.";
+      }),
+      builder.addCase(getProductsAsync.pending, (state) => {
+        state.status = "pendingGetProducts";
+        console.log(state.status);
+      }),
+      builder.addCase(getProductsAsync.fulfilled, (state, action) => {
+        state.products = action.payload;
+        state.userProducts = action.payload.filter(
+          (product) => product.ownerId === "u1"
+        );
+        state.status = "idle";
+        console.log(state.status);
+      }),
+      builder.addCase(getProductsAsync.rejected, (state) => {
+        state.status = "idle";
+        state.errorStatus = "Something went wrong when contacting the server!";
+      }),
+      builder.addCase(putProductAsync.pending, (state) => {
+        state.status = "pendingPutProduct";
+        console.log(state.status);
+      }),
+      builder.addCase(putProductAsync.fulfilled, (state, action) => {
+        //console.log(action.payload);
+        let currentProducts = state.products;
+        const index = currentProducts.findIndex(
+          (product) => product.id === action.payload.id
+        );
+        // console.log(updatedProduct);
+        currentProducts[index] = action.payload;
+        //console.log(currentProducts[index]);
+        state.products = currentProducts;
+        //console.log(state.products);
+        // Remember that ownerId has already been set when loading the product!
+        state.userProducts = state.products.filter(
+          (product) => product.ownerId === "u1"
+        );
+        state.status = "idle";
+        console.log(state.status);
+      }),
+      builder.addCase(putProductAsync.rejected, (state) => {
+        state.status = "idle";
+        state.errorStatus = "Something went wrong updating the product.";
+        throw new Error("Something went wrong updating the product!");
+      }),
+      builder.addCase(deleteProductAsync.pending, (state) => {
+        state.status = "pendingDeleteProduct";
+        console.log(state.status);        
+      }),
+      builder.addCase(deleteProductAsync.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.userProducts = state.userProducts.filter(
+          (product) => product.id !== action.payload
+        );
+        state.products = state.products.filter(
+          (product) => product.id !== action.payload
+        );
+        state.status = "idle";
+        console.log(state.status);
+      }),
+      builder.addCase(deleteProductAsync.rejected, (state) => {
+        state.status = "idle";
+        state.errorStatus = "Something went wrong deleting the product."
+      })
+  },
 });
 
-export const { deleteProduct, createProduct, updateProduct } =
+export const { deleteProduct, createProduct, updateProduct, resetErrorStatus } =
   productSlice.actions;
 export default productSlice.reducer;

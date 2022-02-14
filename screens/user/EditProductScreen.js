@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Button,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import colors from "../../constants/colors";
@@ -13,18 +14,28 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/CustomHeaderButton";
 import { createProduct, updateProduct } from "../../store/productSlice";
 import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import {
+  postProductAsync,
+  getProductsAsync,
+  putProductAsync,
+} from "../../store/productSlice";
 
 const schema = yup.object({
   title: yup.string().required("Title is a required field"),
   imageUrl: yup.string().required("Image URL is a required field"),
-  price: yup.number("Price must be a number").positive("Price must be a positive number").required("Price is a required field"),
+  price: yup
+    .number("Price must be a number")
+    .positive("Price must be a positive number")
+    .required("Price is a required field"),
   description: yup.string().required("Description is a required field"),
 });
 
 export default function EditProductScreen({ navigation, route }) {
-  const { products } = useSelector((state) => state.products);
+  const { products, status, errorStatus } = useSelector(
+    (state) => state.products
+  );
   const [selectedProduct, setSelectedProduct] = useState({
     id: "",
     ownerId: "u1",
@@ -37,7 +48,7 @@ export default function EditProductScreen({ navigation, route }) {
     control,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
   const titleInputRef = useRef();
   const imageUrlInputRef = useRef();
@@ -53,18 +64,17 @@ export default function EditProductScreen({ navigation, route }) {
       price: +data.price,
       description: data.description,
     };
+    delete product.id;
 
     //console.log(product);
-
     if (selectedProduct.id === "") {
       // console.log("new product");
-      dispatch(createProduct(product));
+      dispatch(postProductAsync(product));
     } else {
       // console.log("update product");
-      dispatch(updateProduct(product));
+      dispatch(putProductAsync({ key: selectedProduct.id, product: product }));
     }
-
-    navigation.goBack();
+    //navigation.goBack();
   };
 
   const onError = (errors) => {
@@ -85,6 +95,14 @@ export default function EditProductScreen({ navigation, route }) {
       console.log("There are no errors!");
     }
   };
+
+  useEffect(() => {
+    if (errorStatus !== "") {
+      Alert.alert("An error occured!", errorStatus, [{ text: "Okay" }]);
+    } else {
+      navigation.goBack();
+    }
+  }, [errorStatus]);
 
   //console.log(errors);
 
@@ -189,7 +207,9 @@ export default function EditProductScreen({ navigation, route }) {
               )}
             />
             {errors["price"] && (
-              <Text style={styles.error}>Price is a required field and must be a positive number </Text>
+              <Text style={styles.error}>
+                Price is a required field and must be a positive number{" "}
+              </Text>
             )}
           </View>
         )}

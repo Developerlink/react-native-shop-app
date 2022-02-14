@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import store from "../store/store";
+import {Alert} from "react-native";
 
-axios.defaults.baseURL =
-  "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
+// axios.defaults.baseURL =
+//   "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
 axios.defaults.withCredentials = false;
 
 axios.interceptors.request.use((config) => {
@@ -21,7 +21,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("Response interceptor log:" + error);
+    console.log("Response interceptor log:" + error);    
     const { data, status } = error.response;
     if (status === 400) {
       if (data.errors) {
@@ -36,7 +36,7 @@ axios.interceptors.response.use(
     } else {
       console.log("Response Interceptor else: " + data);
     }
-    return Promise.reject(error.response);
+    return Promise.reject(error);
   }
 );
 
@@ -55,8 +55,10 @@ const Comments = {
 };
 
 const Products = {
-  getProducts: () => requests.get("products.json"),
-  postProduct: (data) => requests.post("products.json", data),
+  getProducts: () => requests.get("https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/products.json"),
+  postProduct: (data) => requests.post("https://react-http-e1048-default-rtdb.europe-west1.firebasedatproducts.json", data),
+  putProduct: (data) => requests.put(`https://react-http-e1048-default-rtdb.europe-west1.firebasedatproducts/${data.key}.json`, data.product),
+  deleteProduct: (id) => requests.delete(`products/${id}.json`)
 };
 
 const agent = {

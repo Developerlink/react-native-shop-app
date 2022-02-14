@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { enableScreens } from "react-native-screens";
 import { Provider } from "react-redux";
@@ -37,7 +37,7 @@ export default function App() {
     <Provider store={store}>
       <StatusBar
         backgroundColor={colors.primaryDark}
-        style={Platform.OS === "android" ? "light" : "dark" }
+        style={Platform.OS === "android" ? "light" : "dark"}
       />
       <NavigationContainer>
         <DrawerNavigator />
