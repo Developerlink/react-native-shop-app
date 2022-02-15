@@ -68,10 +68,12 @@ export const deleteProductAsync = createAsyncThunk(
       await agent.Products.deleteProduct(id);
       return id;
     } catch (error) {
-      return thunkAPI.rejectWithValue({error: error.data});
+      return thunkAPI.rejectWithValue({
+        error: error.data,
+      });
     }
   }
-)
+);
 
 const productSlice = createSlice({
   name: "products",
@@ -118,7 +120,7 @@ const productSlice = createSlice({
     },
     resetErrorStatus: (state) => {
       errorStatus = "";
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(postProductAsync.pending, (state) => {
@@ -140,7 +142,6 @@ const productSlice = createSlice({
       }),
       builder.addCase(postProductAsync.rejected, (state) => {
         state.status = "idle";
-        state.errorStatus = "Something went wrong posting the product.";
       }),
       builder.addCase(getProductsAsync.pending, (state) => {
         state.status = "pendingGetProducts";
@@ -156,7 +157,6 @@ const productSlice = createSlice({
       }),
       builder.addCase(getProductsAsync.rejected, (state) => {
         state.status = "idle";
-        state.errorStatus = "Something went wrong when contacting the server!";
       }),
       builder.addCase(putProductAsync.pending, (state) => {
         state.status = "pendingPutProduct";
@@ -182,12 +182,10 @@ const productSlice = createSlice({
       }),
       builder.addCase(putProductAsync.rejected, (state) => {
         state.status = "idle";
-        state.errorStatus = "Something went wrong updating the product.";
-        throw new Error("Something went wrong updating the product!");
       }),
       builder.addCase(deleteProductAsync.pending, (state) => {
         state.status = "pendingDeleteProduct";
-        console.log(state.status);        
+        console.log(state.status);
       }),
       builder.addCase(deleteProductAsync.fulfilled, (state, action) => {
         console.log(action.payload);
@@ -202,11 +200,11 @@ const productSlice = createSlice({
       }),
       builder.addCase(deleteProductAsync.rejected, (state) => {
         state.status = "idle";
-        state.errorStatus = "Something went wrong deleting the product."
-      })
+        state.errorStatus = "Something went wrong deleting the product.";
+      });
   },
 });
 
 export const { deleteProduct, createProduct, updateProduct, resetErrorStatus } =
   productSlice.actions;
-export default productSlice.reducer;
+export default productSlice;

@@ -8,7 +8,7 @@ import {
   Button,
   Alert,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, unwrap } from "react-redux";
 import colors from "../../constants/colors";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/CustomHeaderButton";
@@ -21,6 +21,7 @@ import {
   getProductsAsync,
   putProductAsync,
 } from "../../store/productSlice";
+import { computeWindowedRenderLimits } from "react-native/Libraries/Lists/VirtualizeUtils";
 
 const schema = yup.object({
   title: yup.string().required("Title is a required field"),
@@ -42,7 +43,6 @@ export default function EditProductScreen({ navigation, route }) {
   });
   const dispatch = useDispatch();
   const {
-    setFocus,
     setValue,
     handleSubmit,
     control,
@@ -66,15 +66,39 @@ export default function EditProductScreen({ navigation, route }) {
     };
     delete product.id;
 
-    //console.log(product);
-    if (selectedProduct.id === "") {
-      // console.log("new product");
-      dispatch(postProductAsync(product));
-    } else {
-      // console.log("update product");
-      dispatch(putProductAsync({ key: selectedProduct.id, product: product }));
+    try {
+      let response;
+      //console.log(product);
+      if (selectedProduct.id === "") {
+        // console.log("new product");
+        response = dispatch(postProductAsync(product))
+          .unwrap()
+          .then(() => navigation.goBack())
+          .catch(() =>
+            Alert.alert(
+              "An error occured!",
+              "Something went wrong creating the product.",
+              [{ text: "Okay" }]
+            )
+          );
+      } else {
+        // console.log("update product");
+        response = dispatch(
+          putProductAsync({ key: selectedProduct.id, product: product })
+        )
+          .unwrap()
+          .then(() => navigation.goBack())
+          .catch((errorData) =>
+            Alert.alert(
+              "An error occured!",
+              "Something went wrong updating the product.",
+              [{ text: "Okay" }]
+            )
+          );
+      }
+    } catch (error) {
+      //console.log(error);
     }
-    //navigation.goBack();
   };
 
   const onError = (errors) => {
@@ -95,14 +119,6 @@ export default function EditProductScreen({ navigation, route }) {
       console.log("There are no errors!");
     }
   };
-
-  useEffect(() => {
-    if (errorStatus !== "") {
-      Alert.alert("An error occured!", errorStatus, [{ text: "Okay" }]);
-    } else {
-      navigation.goBack();
-    }
-  }, [errorStatus]);
 
   //console.log(errors);
 

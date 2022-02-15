@@ -6,6 +6,7 @@ import CartItem from "../../components/CartItem";
 import { removeFromCart, resetCart } from "../../store/cartSlice";
 import { addOrder } from "../../store/orderSlice";
 import Card from "../../components/Card";
+import { postOrderAsync } from "../../store/orderSlice";
 
 export default function CartScreen({ navigation, route }) {
   const { totalAmount, items } = useSelector((state) => state.cart);
@@ -22,8 +23,9 @@ export default function CartScreen({ navigation, route }) {
           title="Order Now"
           disabled={items.length === 0}
           onPress={() => {
-            dispatch(addOrder({items, totalAmount}));
+            dispatch(postOrderAsync({ ownerId: "u1", order: { items, totalAmount }}));
             dispatch(resetCart());
+            navigation.goBack();
             navigation.navigate("/ordersDrawer");
           }}
         />

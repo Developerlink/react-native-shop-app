@@ -1,8 +1,10 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import {Alert} from "react-native";
+import { Alert } from "react-native";
 
-// axios.defaults.baseURL =
-//   "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
+const BASE_URL = "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
+
+axios.defaults.baseURL = BASE_URL;
+
 axios.defaults.withCredentials = false;
 
 axios.interceptors.request.use((config) => {
@@ -13,15 +15,14 @@ axios.interceptors.request.use((config) => {
   //   config.headers.Authorization = `Bearer ${token}`;
   // }
   return config;
-}
-);
+});
 
 axios.interceptors.response.use(
   async (response) => {
     return response;
   },
   (error) => {
-    console.log("Response interceptor log:" + error);    
+    console.log("Response interceptor log:" + error);
     const { data, status } = error.response;
     if (status === 400) {
       if (data.errors) {
@@ -36,12 +37,11 @@ axios.interceptors.response.use(
     } else {
       console.log("Response Interceptor else: " + data);
     }
-    return Promise.reject(error);
+    return Promise.reject(error.response);
   }
 );
 
 const getResponseBody = (response) => response.data;
-
 
 const requests = {
   get: (url) => axios.get(url).then(getResponseBody),
@@ -55,15 +55,21 @@ const Comments = {
 };
 
 const Products = {
-  getProducts: () => requests.get("https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/products.json"),
-  postProduct: (data) => requests.post("https://react-http-e1048-default-rtdb.europe-west1.firebasedatproducts.json", data),
-  putProduct: (data) => requests.put(`https://react-http-e1048-default-rtdb.europe-west1.firebasedatproducts/${data.key}.json`, data.product),
-  deleteProduct: (id) => requests.delete(`products/${id}.json`)
+  getProducts: () => requests.get("products.json"),
+  postProduct: (data) => requests.post("products.json", data),
+  putProduct: (data) => requests.put(`products/${data.key}.json`, data.product),
+  deleteProduct: (id) => requests.delete(`products/${id}.json`),
 };
+
+const Orders = {
+  getOrders: (ownerId) => requests.get(`orders/${ownerId}.json`),
+  postOrder: (data) => requests.post(`orders/${data.ownerId}.json`, data.order)
+}
 
 const agent = {
   Comments,
   Products,
+  Orders
 };
 
 export default agent;

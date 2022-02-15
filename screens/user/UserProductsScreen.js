@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,12 +8,13 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/ProductItem";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/CustomHeaderButton";
 import colors from "../../constants/colors";
-import { deleteProduct, deleteProductAsync } from "../../store/productSlice";
+import { deleteProduct, deleteProductAsync, getProductsAsync } from "../../store/productSlice";
 import { deleteProductFromCart } from "../../store/cartSlice";
 
 export default function UserProductsScreen({ navigation, route }) {
@@ -21,6 +22,14 @@ export default function UserProductsScreen({ navigation, route }) {
     (state) => state.products
   );
   const dispatch = useDispatch();
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getProductsAsync());
+
+      return () => {};
+    }, [])
+  );
 
   useEffect(async () => {
     navigation.setOptions({
