@@ -1,19 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ShopStackNavigator from "./ShopStackNavigator";
 import OrdersStackNavigator from "./OrdersStackNavigator";
 import UserStackNavigator from "./UserStackNavigator";
 import { useDispatch, useSelector } from "react-redux";
 import AuthStackNavigator from "./AuthStackNavigator";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { setUser } from "../store/authSlice";
 
 import colors from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-
+import auth from "@react-native-firebase/auth";
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
-  const { isLoggedIn, status } = useSelector((state) => state.auth);
-  console.log(isLoggedIn);
+  const { userEmail, status } = useSelector((state) => state.auth);
 
   return (
     <Drawer.Navigator
@@ -26,7 +27,7 @@ export default function DrawerNavigator() {
         drawerActiveTintColor: colors.primaryLight,
       }}
     >
-      {isLoggedIn ? (
+      {userEmail !== null ? (
         <>
           <Drawer.Screen
             name="/productDrawer"
@@ -92,3 +93,7 @@ export default function DrawerNavigator() {
     </Drawer.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+});

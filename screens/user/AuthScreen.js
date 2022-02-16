@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   ScrollView,
   View,
@@ -14,7 +14,8 @@ import Card from "../../components/Card";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {LinearGradient} from "expo-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
+import { useSelector, useDispatch } from "react-redux";
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -61,67 +62,70 @@ export default function AuthScreen({ navigation, route }) {
 
   return (
     <KeyboardAvoidingView style={styles.screen}>
-        <LinearGradient colors={["#eee", colors.primaryLight, "#eee"]} style={styles.gradient}>
-      <Card>
-        <ScrollView style={styles.form}>
-          <View style={styles.form}>
-            <View style={styles.formControl}>
-              <Text style={styles.label}>Email</Text>
-              <Controller
-                control={control}
-                name="email"
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value } }) => (
+      <LinearGradient
+        colors={["#eee", colors.primaryLight, "#eee"]}
+        style={styles.gradient}
+      >
+        <Card>
+          <ScrollView style={styles.form}>
+            <View style={styles.form}>
+              <View style={styles.formControl}>
+                <Text style={styles.label}>Email</Text>
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{ required: true }}
+                  defaultValue=""
+                  render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                    style={styles.input}
-                    value={value}
-                    onChangeText={(value) => onChange(value)}
-                    onBlur={onBlur}
-                    returnKeyType="next"
-                    ref={emailInputRef}
-                  />
+                      style={styles.input}
+                      value={value}
+                      onChangeText={(value) => onChange(value)}
+                      onBlur={onBlur}
+                      returnKeyType="next"
+                      ref={emailInputRef}
+                    />
                   )}
-              />
-              {errors["email"] && (
+                />
+                {errors["email"] && (
                   <Text style={styles.error}>{errors["email"].message}</Text>
+                )}
+              </View>
+              <View style={styles.formControl}>
+                <Text style={styles.label}>Password</Text>
+                <Controller
+                  control={control}
+                  name="password"
+                  rules={{ required: true }}
+                  defaultValue=""
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={styles.input}
+                      value={value}
+                      onChangeText={(value) => onChange(value)}
+                      onBlur={onBlur}
+                      returnKeyType="done"
+                      ref={passwordInputRef}
+                      secureTextEntry={true}
+                    />
                   )}
-            </View>
-            <View style={styles.formControl}>
-              <Text style={styles.label}>Password</Text>
-              <Controller
-                control={control}
-                name="password"
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={styles.input}
-                    value={value}
-                    onChangeText={(value) => onChange(value)}
-                    onBlur={onBlur}
-                    returnKeyType="done"
-                    ref={passwordInputRef}
-                    secureTextEntry={true}
-                  />
-                  )}
-                  />
-              {errors["password"] && (
+                />
+                {errors["password"] && (
                   <Text style={styles.error}>{errors["password"].message}</Text>
-              )}
-            </View>
-            <View style={styles.buttonContainer}>
-              <View style={styles.button}>
-                <Button title="Login" color={colors.primaryLight} />
+                )}
               </View>
-              <View style={styles.button}>
-                <Button title="Switch to Sign Up" color={colors.primary} />
+              <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                  <Button title="Login" color={colors.primaryLight} />
+                </View>
+                <View style={styles.button}>
+                  <Button title="Sign Up" color={colors.primary} />
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
-      </Card>
-                  </LinearGradient>
+          </ScrollView>
+        </Card>
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 }
@@ -129,8 +133,8 @@ export default function AuthScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-},
-gradient: {
+  },
+  gradient: {
     width: "100%",
     height: "100%",
     paddingHorizontal: Dimensions.get("window").width < 500 ? 30 : 40,

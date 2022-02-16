@@ -3,6 +3,8 @@ import { Alert } from "react-native";
 
 const BASE_URL = "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
 
+//const BASE_URL = "https://react-native-shop-1c33e-default-rtdb.europe-west1.firebasedatabase.app/";
+
 axios.defaults.baseURL = BASE_URL;
 
 axios.defaults.withCredentials = false;
@@ -66,10 +68,15 @@ const Orders = {
   postOrder: (data) => requests.post(`orders/${data.ownerId}.json`, data.order)
 }
 
+const Auth = {
+  signup: (data) => requests.post("", data)
+}
+
 const agent = {
   Comments,
   Products,
-  Orders
+  Orders,
+  Auth
 };
 
 export default agent;
