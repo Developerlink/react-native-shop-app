@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import agent from "../api/agent";
 
 const initialState = {
-  userEmail: "test@test.com",  
+  userEmail: "test@test.com",   
   status: "idle",
   token: null,
 };

@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Alert } from "react-native";
 
 const BASE_URL = "https://react-http-e1048-default-rtdb.europe-west1.firebasedatabase.app/";
 
